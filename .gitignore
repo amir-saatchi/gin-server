@@ -1,0 +1,28 @@
+# Go
+*.dylib
+*.so
+*.test
+*.exe
+*.out
+*.orig
+*.a
+*.pp
+*.so.*
+
+# Editor/IDE files
+.vscode/
+.idea/
+*.iml
+
+# Node.js (if you have a frontend)
+node_modules/
+
+# Build artifacts
+bin/
+pkg/
+dist/
+vendor/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
