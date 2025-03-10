@@ -3,21 +3,34 @@ package routes
 import (
 	"net/http"
 
+	"github.com/amir-saatchi/rest-api/internal/db"
 	"github.com/amir-saatchi/rest-api/internal/models"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
 // NewRouter initializes the Gin router with both DB instances
-func NewRouter(mainDB *gorm.DB, secondaryDB *gorm.DB) *gin.Engine {
+func NewRouter() *gin.Engine {
     router := gin.Default()
 
-    // Pass both DB instances to handlers via context
     router.Use(func(c *gin.Context) {
-        c.Set("mainDB", mainDB)
-        c.Set("secondaryDB", secondaryDB)
+        companyID := c.Query("company_id")
+        if companyID == "" {
+            c.AbortWithStatusJSON(400, gin.H{"error": "company_id required"})
+            return
+        }
+
+        dbInstance, err := db.DBS_Manager.GetDB(companyID)
+        if err != nil {
+            c.AbortWithStatusJSON(500, gin.H{"error": err.Error()})
+            return
+        }
+
+        c.Set("db", dbInstance)
         c.Next()
     })
+
+
 
     // Define routes
     router.GET("/", indexHandler)
@@ -26,6 +39,8 @@ func NewRouter(mainDB *gorm.DB, secondaryDB *gorm.DB) *gin.Engine {
 
     router.GET("/users", getAllUsers)
     router.POST("/users", createUser)
+
+    router.POST("/logs", createLog)
 
     return router
 }
@@ -61,7 +76,7 @@ func createUser(c *gin.Context) {
         return
     }
 
-    dbInstance := c.MustGet("db").(*gorm.DB)
+    dbInstance := c.MustGet("mainDB").(*gorm.DB)
     result := dbInstance.Create(&user)
     if result.Error != nil {
         c.AbortWithStatusJSON(500, gin.H{"error": "Failed to create user"})
