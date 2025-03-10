@@ -1,5 +1,5 @@
 # Stage 1: Build the Go binary
-FROM golang:1.21 AS builder
+FROM golang:1.24.1 AS builder
 
 # Set working directory
 WORKDIR /app
@@ -14,7 +14,7 @@ RUN go mod download
 COPY . .
 
 # Build the binary (disable CGO for smaller image)
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o app ./cmd/main.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o app ./main.go
 
 # Stage 2: Create a minimal runtime image
 FROM alpine:latest

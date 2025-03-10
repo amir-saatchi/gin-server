@@ -1,28 +1,43 @@
 package db
 
 import (
-    "gorm.io/driver/postgres"
-    "gorm.io/gorm"
-    "log"
+	"log"
+	"os"
+
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 
 	"github.com/amir-saatchi/rest-api/internal/models"
 )
 
-// DB struct to hold the database instance
-var DB *gorm.DB
+// MainDB and SecondaryDB are the two database instances
+var MainDB *gorm.DB
+var SecondaryDB *gorm.DB
 
 func InitDB() {
-    dsn := "host=localhost user=postgres password=yourpassword dbname=mydb port=5432 sslmode=disable"
-    db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-    if err != nil {
-        log.Fatalf("Failed to connect to database: %v", err)
-    }
-    DB = db
+    // Connect to MainDB
+       dsnMain := os.Getenv("DB_MAIN_URL")
+       dbMain, err := gorm.Open(postgres.Open(dsnMain), &gorm.Config{})
+       if err != nil {
+           log.Fatalf("Failed to connect to main database: %v", err)
+       }
+       MainDB = dbMain
+       AutoMigrateMain()
 
-    // Auto-migrate schema (for development only)
-    AutoMigrate()
+    // Connect to SecondaryDB
+    dsnSecondary := os.Getenv("DB_SECONDARY_URL")
+    dbSecondary, err := gorm.Open(postgres.Open(dsnSecondary), &gorm.Config{})
+    if err != nil {
+        log.Fatalf("Failed to connect to secondary database: %v", err)
+    }
+    SecondaryDB = dbSecondary
+    AutoMigrateSecondary()
 }
 
-func AutoMigrate() {
-    DB.AutoMigrate(&models.User{})
+func AutoMigrateMain() {
+    MainDB.AutoMigrate(&models.User{}) // Example model for MainDB
+}
+
+func AutoMigrateSecondary() {
+    SecondaryDB.AutoMigrate(&models.Log{}) // Example model for SecondaryDB
 }

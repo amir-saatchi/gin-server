@@ -5,19 +5,37 @@ services:
     build: .
     ports:
       - "8080:8080"
-    environment:
-      - DB_URL=postgresql://user:password@db:5432/mydb
+    # environment:
+    #   - DB_MAIN_URL=postgresql://mainuser:mainpassword@postgres-main:5432/maindb
+    #   - DB_SECONDARY_URL=postgresql://secondaryuser:secondarypassword@postgres-secondary:5432/secondarydb
+    env_file:
+      - .env
     depends_on:
-      - db
+      - postgres-main
+      - postgres-secondary
 
-  db:
-    image: postgres:15
+  postgres-main:
+    image: postgres:16
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: mydb
+      POSTGRES_DB: maindb
+      POSTGRES_USER: mainuser
+      POSTGRES_PASSWORD: mainpassword
+    ports:
+      - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres-main-data:/var/lib/postgresql/data
+
+  postgres-secondary:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: secondarydb
+      POSTGRES_USER: secondaryuser
+      POSTGRES_PASSWORD: secondarypassword
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-secondary-data:/var/lib/postgresql/data
 
 volumes:
-  postgres_data:
+  postgres-main-data:
+  postgres-secondary-data:

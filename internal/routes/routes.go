@@ -8,14 +8,14 @@ import (
 	"gorm.io/gorm"
 )
 
-// NewRouter returns a Gin router with middleware and routes
-func NewRouter(db *gorm.DB) *gin.Engine {
-    // Initialize Gin router
+// NewRouter initializes the Gin router with both DB instances
+func NewRouter(mainDB *gorm.DB, secondaryDB *gorm.DB) *gin.Engine {
     router := gin.Default()
 
-    // Pass the DB to handlers via context
+    // Pass both DB instances to handlers via context
     router.Use(func(c *gin.Context) {
-        c.Set("db", db)
+        c.Set("mainDB", mainDB)
+        c.Set("secondaryDB", secondaryDB)
         c.Next()
     })
 
@@ -31,10 +31,27 @@ func NewRouter(db *gorm.DB) *gin.Engine {
 }
 
 func getAllUsers(c *gin.Context) {
+    mainDB := c.MustGet("mainDB").(*gorm.DB)
     var users []models.User
-    dbInstance := c.MustGet("db").(*gorm.DB)
-    dbInstance.Find(&users)
+    mainDB.Find(&users)
     c.JSON(200, users)
+}
+
+func createLog(c *gin.Context) {
+    var logEntry models.Log
+    if err := c.BindJSON(&logEntry); err != nil {
+        c.AbortWithStatusJSON(400, gin.H{"error": "Invalid request"})
+        return
+    }
+
+    secondaryDB := c.MustGet("secondaryDB").(*gorm.DB)
+    result := secondaryDB.Create(&logEntry)
+    if result.Error != nil {
+        c.AbortWithStatusJSON(500, gin.H{"error": "Failed to create log"})
+        return
+    }
+
+    c.JSON(201, logEntry)
 }
 
 func createUser(c *gin.Context) {
