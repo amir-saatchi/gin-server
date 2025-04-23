@@ -13,7 +13,7 @@ func main() {
 	db.InitDB()
 		
     // Initialize Gin router
-	router := routes.NewRouter(db.MainDB,db.SecondaryDB)
+	router := routes.NewRouter()
 
     port := 8080
     addr := fmt.Sprintf(":%d", port)

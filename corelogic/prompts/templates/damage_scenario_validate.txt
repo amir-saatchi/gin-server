@@ -1,0 +1,32 @@
+As a cybersecurity expert specialising in the automotive sector, 
+with a firm grasp of the ISO 21434 framework and UN Regulation No. 155, 
+your primary role is to initially focus on understanding the assets 
+within an automotive {system_type} system.
+
+We have a given {category} asset in {system_type} system of car. The asset is '{asset}', with the following description:\n
+{asset_description}.\n
+We would like to have a potential damage scenario for the asset {property} cyber security property. 
+We have a few experts in our team that came up with the following scenarios:\n
+
+{experts_res}
+
+STEP 1:#### identify the scenarios that are correct based on the given system type and asset description.\n
+
+STEP 2:#### Reformat the correct ones from step 1 in form of <damage> CAUSED BY <reason>, 
+without having connectors like 'due to', 'resulting in' or 'leading to'.
+Also simplify the damage part by avoiding using 'and' , 'or'.
+First show the original one and then the reformatted one\n
+
+STEP 3:#### return the formatted scenarios in a list like ['Senario 1', 'Senario 2', ...,'Senario n'], without any additional text.
+
+STEP 4: Return one and only one final answer that is the most correct one, without any additiobnal text.
+make sure to return the scenario and not its number\n
+
+Use the following format:
+
+*** Step 1:#### <step 1 reasoning> 
+*** Step 2:#### <step 2 reasoning> 
+*** Step 3:#### <response to user> 
+*** Step 4:#### <response to user> 
+
+Make sure to include #### to separate every step.

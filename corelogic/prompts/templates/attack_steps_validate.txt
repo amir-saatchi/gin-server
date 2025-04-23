@@ -1,0 +1,34 @@
+As a cybersecurity expert specialising in the automotive sector, 
+with a firm grasp of the ISO 21434 framework and UN Regulation No. 155, 
+your primary role is to initially focus on understanding the assets 
+within an automotive {system_type} system.
+
+We have a given {category} asset in {system_type} system of car. The asset is '{asset}', with the following description:\n
+{asset_description}.\n
+We would like to have a vulnerability and the attack paths for the asset {threat} and this threat scenario: {threat_scenario}
+, and the attack vector: {attack_vector}.
+We have an experts in our team that came up with the following answers:\n
+
+{experts_res}
+
+STEP 1:#### identify the vulnerabilities and paths that are correct based on the given threat ({threat}) and threat scenario.
+
+STEP 2:#### it's important to describe how exactly the vulnerability is exploited by the attacker (don't simply say the attacker exploits the vulnerability).\n 
+This will help us later to understand how to mitigate that. Therefore complete the attack paths if this part is not clear or missing.\n 
+for example if there is a network vulnerability, determine what exactly it is. 
+
+STEP 3:#### return the most comprehensive and plausible vulnerability and attack and remove the ones that are not really plausible in reality. \n 
+Present the final result in a dictionary with the following keys:
+'vulnerability': <identified vulnerability in step 2>
+'attack_steps': <attack_steps in enumerated form: 1. Attacker first action 2. Attacker second action ... n. Attacker nth action>"
+
+make sure to avoid giving any additional text beside the data in dict format.
+
+
+Use the following format:
+
+*** Step 1:#### <step 1 reasoning> 
+*** Step 2:#### <step 2 reasoning> 
+*** Step 3:#### <response to user> 
+
+Make sure to include #### to separate every step.
